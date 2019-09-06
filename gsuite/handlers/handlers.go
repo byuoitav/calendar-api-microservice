@@ -18,5 +18,10 @@ func GetRoomEvents(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Cannot authenticate client: %s", err.Error()))
 	}
 
+	_, err = helpers.GetEvents(roomName, calendarService)
+	if err != nil {
+
+	}
+
 	return ctx.JSON(http.StatusOK, "Room Events")
 }

@@ -1,6 +1,10 @@
 package helpers
 
-import "fmt"
+import (
+	"fmt"
+
+	"google.golang.org/api/calendar/v3"
+)
 
 const (
 	urlPrefix = "https://www.googleapis.com/calendar/v3"
@@ -14,9 +18,9 @@ type CalEvent struct {
 }
 
 //GetEvents ...
-func GetEvents(room string, calSvc *Service) ([]CalEvent, error) {
+func GetEvents(room string, calSvc *calendar.Service) ([]CalEvent, error) {
 	//find room calendar id
-	calList, err := service.CalendarList.List().Fields("items").Do()
+	calList, err := calSvc.CalendarList.List().Fields("items").Do()
 	if err != nil {
 		return nil, fmt.Errorf("Unable to retrieve calendar list | %v", err)
 	}
@@ -34,13 +38,14 @@ func GetEvents(room string, calSvc *Service) ([]CalEvent, error) {
 	}
 	//get days events
 
-	eventList, err := service.Events.List(calID).Fields("items(summary)").Do()
+	eventList, err := calSvc.Events.List(calID).Fields("items(summary, start, end)").Do()
+	// eventList, err := calSvc.Events.List(calID).Fields("items(summary, start, end)").TimeMin().TimeMax().Do()
 	if err != nil {
 		return nil, fmt.Errorf("Unable to retrieve events | %v", err)
 	}
 
 	for _, event := range eventList.Items {
-
+		fmt.Printf("Event %v: Start: %v, End: %v\n", event.Summary, event.Start.DateTime, event.End.DateTime)
 	}
 
 	return nil, nil

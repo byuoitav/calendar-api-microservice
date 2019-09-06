@@ -11,7 +11,7 @@ import (
 )
 
 //AuthenticateClient ...
-func AuthenticateClient() (*Service, error) {
+func AuthenticateClient() (*calendar.Service, error) {
 	pwd, _ := os.Getwd()
 	data, err := ioutil.ReadFile(pwd + "/helpers/go-calendar.json")
 	if err != nil {
@@ -29,11 +29,12 @@ func AuthenticateClient() (*Service, error) {
 	fmt.Println("Getting authorization")
 	client := conf.Client(oauth2.NoContext)
 
-	service, err := calendar.New(client)
-	if err != nil {
-		return nil, err
-	}
-	return service, err
+	return calendar.New(client)
+	// service, err := calendar.New(client)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// return service, err
 }
 
 //Scope: https://www.googleapis.com/auth/calendar

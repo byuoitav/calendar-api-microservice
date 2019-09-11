@@ -2,7 +2,10 @@ package helpers
 
 import (
 	"fmt"
+	"time"
 
+	"github.com/byuoitav/calendar-api-microservice/gsuite/models"
+	"github.com/byuoitav/common/log"
 	"google.golang.org/api/calendar/v3"
 )
 
@@ -10,65 +13,69 @@ const (
 	urlPrefix = "https://www.googleapis.com/calendar/v3"
 )
 
-//CalEvent ...
-type CalEvent struct {
-	name      string
-	startTime string
-	endTime   string
-}
-
 //GetEvents ...
-func GetEvents(room string, calSvc *calendar.Service) ([]CalEvent, error) {
-	//find room calendar id
-	calList, err := calSvc.CalendarList.List().Fields("items").Do()
+func GetEvents(room string, calSvc *calendar.Service) ([]models.CalendarEvent, error) {
+	calID, err := findCalendarID(room, calSvc)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to retrieve calendar list | %v", err)
+		return nil, err
 	}
 
-	var calID string
-	for _, cal := range calList.Items {
-		fmt.Printf("%v | %v\n", cal.Id, cal.Summary)
-		if cal.Summary == room {
-			calID = cal.Id
-			break
-		}
-	}
-	if calID == "" {
-		return nil, fmt.Errorf("Room: %s does not have an assigned calendar", room)
-	}
-	//get days events
+	currentTime := time.Now()
+	currentDayBeginning := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, currentTime.Location())
+	currentDayEnding := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 23, 59, 59, 0, currentTime.Location())
 
-	eventList, err := calSvc.Events.List(calID).Fields("items(summary, start, end)").Do()
-	// eventList, err := calSvc.Events.List(calID).Fields("items(summary, start, end)").TimeMin().TimeMax().Do()
+	eventList, err := calSvc.Events.List(calID).Fields("items(summary, start, end)").TimeMin(currentDayBeginning.Format("2006-01-02T15:04:05-07:00")).TimeMax(currentDayEnding.Format("2006-01-02T15:04:05-07:00")).Do()
 	if err != nil {
 		return nil, fmt.Errorf("Unable to retrieve events | %v", err)
 	}
 
+	var events []models.CalendarEvent
 	for _, event := range eventList.Items {
-		fmt.Printf("Event %v: Start: %v, End: %v\n", event.Summary, event.Start.DateTime, event.End.DateTime)
+		events = append(events, models.CalendarEvent{
+			Name:      event.Summary,
+			StartTime: event.Start.DateTime,
+			EndTime:   event.End.DateTime})
 	}
 
-	return nil, nil
+	return events, err
 }
 
-// listRes, err := service.CalendarList.List().Fields("items").Do()
-// 	for _, v := range listRes.Items {
-// 		fmt.Printf("%v | %v\n", v.Id, v.Summary)
-// 	}
+//SetEvent ...
+func SetEvent(room string, event models.CalendarEvent, calSvc *calendar.Service) error {
+	calID, err := findCalendarID(room, calSvc)
+	if err != nil {
+		return err
+	}
 
-// 	fmt.Println("Getting event lists")
+	newEvent := &calendar.Event{
+		Summary: event.Name,
+		Start: &calendar.EventDateTime{
+			DateTime: event.StartTime,
+		},
+		End: &calendar.EventDateTime{
+			DateTime: event.EndTime,
+		},
+	}
 
-// 	for _, cal := range listRes.Items {
-// 		id := cal.Id
-// 		res, err := service.Events.List(id).Fields("items(updated,summary)", "summary").Do()
-// 		if err != nil {
-// 			fmt.Printf("Unable to retrieve calendar events list: %v", err)
-// 			return err
-// 		}
-// 		for _, v := range res.Items {
-// 			fmt.Printf("Calendar ID %q event: %v: %q\n", id, v.Updated, v.Summary)
-// 		}
-// 		fmt.Printf("Calendar ID %q Summary: %v\n", id, res.Summary)
-// 	}
+	newEvent, err = calSvc.Events.Insert(calID, newEvent).Do()
+	if err != nil {
+		log.L.Errorf("Unable to create event | %v", err)
+		return fmt.Errorf("Unable to create event | %v", err)
+	}
 
-// func findRoom(room string, )
+	return nil
+}
+
+func findCalendarID(room string, calSvc *calendar.Service) (string, error) {
+	calList, err := calSvc.CalendarList.List().Fields("items").Do()
+	if err != nil {
+		return "", fmt.Errorf("Unable to retrieve calendar list | %v", err)
+	}
+
+	for _, cal := range calList.Items {
+		if cal.Summary == room {
+			return cal.Id, nil
+		}
+	}
+	return "", fmt.Errorf("Room: %s does not have an assigned calendar", room)
+}

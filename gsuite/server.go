@@ -8,11 +8,6 @@ import (
 	"github.com/byuoitav/common/log"
 )
 
-// func main() {
-// 	helpers.AuthenticateClient()
-// 	// fmt.Printf("Error: %s", err.Error())
-// }
-
 func main() {
 	port := ":8034"
 	router := common.NewRouter()

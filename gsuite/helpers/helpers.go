@@ -15,6 +15,7 @@ const (
 
 //GetEvents ...
 func GetEvents(room string, calSvc *calendar.Service) ([]models.CalendarEvent, error) {
+	log.L.Infof("Getting events for room: %s", room)
 	calID, err := findCalendarID(room, calSvc)
 	if err != nil {
 		return nil, err
@@ -26,6 +27,7 @@ func GetEvents(room string, calSvc *calendar.Service) ([]models.CalendarEvent, e
 
 	eventList, err := calSvc.Events.List(calID).Fields("items(summary, start, end)").TimeMin(currentDayBeginning.Format("2006-01-02T15:04:05-07:00")).TimeMax(currentDayEnding.Format("2006-01-02T15:04:05-07:00")).Do()
 	if err != nil {
+		log.L.Errorf("Unable to retrieve events | %v", err)
 		return nil, fmt.Errorf("Unable to retrieve events | %v", err)
 	}
 

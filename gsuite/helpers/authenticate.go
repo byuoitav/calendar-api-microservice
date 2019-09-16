@@ -31,5 +31,3 @@ func AuthenticateClient(credentials string) (*calendar.Service, error) {
 
 	return calendar.New(client)
 }
-
-//Scope: https://www.googleapis.com/auth/calendar

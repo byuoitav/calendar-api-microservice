@@ -17,13 +17,13 @@ func GetRoomEvents(ctx echo.Context) error {
 	calendarService, err := helpers.AuthenticateClient("/helpers/go-calendar.json")
 	if err != nil {
 		log.L.Errorf("Cannot authenticate client: %s", err.Error())
-		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Cannot authenticate client"))
+		return ctx.JSON(http.StatusInternalServerError, "Cannot authenticate client")
 	}
 
 	roomEvents, err := helpers.GetEvents(roomName, calendarService)
 	if err != nil {
 		log.L.Errorf("Error getting events: %s", err.Error())
-		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Cannot get events"))
+		return ctx.JSON(http.StatusInternalServerError, "Cannot get events")
 	}
 
 	return ctx.JSON(http.StatusOK, roomEvents)
@@ -42,7 +42,7 @@ func AddRoomEvent(ctx echo.Context) error {
 	calendarService, err := helpers.AuthenticateClient("/helpers/go-calendar.json")
 	if err != nil {
 		log.L.Errorf("Cannot authenticate client: %s", err.Error())
-		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Cannot authenticate client"))
+		return ctx.JSON(http.StatusInternalServerError, "Cannot authenticate client")
 	}
 
 	err = helpers.SetEvent(roomName, eventData, calendarService)

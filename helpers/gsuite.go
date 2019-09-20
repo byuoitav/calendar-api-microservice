@@ -12,7 +12,7 @@ import (
 )
 
 //GetGSuite ...
-func GetGSuite(room string) ([]models.GSuiteEvent, error) {
+func GetGSuite(room string) ([]models.CalendarEvent, error) {
 	//Todo: Figure out authentication keys, etc.
 	log.L.Infof("Requesting G Suite events for room: %s", room)
 	//Call the gsuite microservice
@@ -31,7 +31,7 @@ func GetGSuite(room string) ([]models.GSuiteEvent, error) {
 		return nil, fmt.Errorf("Error resolving response body | %v", err)
 	}
 
-	var events []models.GSuiteEvent
+	var events []models.CalendarEvent
 	err = json.Unmarshal([]byte(jsonData), &events)
 	if err != nil {
 		log.L.Errorf("Error resolving response body | %v", err)
@@ -43,7 +43,7 @@ func GetGSuite(room string) ([]models.GSuiteEvent, error) {
 }
 
 //SendGSuite ...
-func SendGSuite(room string, event models.GSuiteEvent) error {
+func SendGSuite(room string, event models.CalendarEvent) error {
 	log.L.Infof("Sending G Suite event to calendar for room: %s", room)
 
 	requestURL := "http://localhost:8034/events/" + room

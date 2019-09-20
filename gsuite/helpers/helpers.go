@@ -49,6 +49,7 @@ func SetEvent(room string, event models.CalendarEvent, calSvc *calendar.Service)
 		return err
 	}
 
+	//Translate event into g suite calendar event object
 	newEvent := &calendar.Event{
 		Summary: event.Name,
 		Start: &calendar.EventDateTime{
@@ -68,6 +69,7 @@ func SetEvent(room string, event models.CalendarEvent, calSvc *calendar.Service)
 	return nil
 }
 
+//Finds and returns calendar id based on calendar/room name
 func findCalendarID(room string, calSvc *calendar.Service) (string, error) {
 	calList, err := calSvc.CalendarList.List().Fields("items").Do()
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/byuoitav/calendar-api-microservice/helpers"
 	"github.com/byuoitav/calendar-api-microservice/models"
 	"github.com/byuoitav/common/log"
+	"github.com/byuoitav/common/structs"
 	"github.com/labstack/echo"
 )
 
@@ -21,7 +22,7 @@ func GetCalendar(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to get schedule configuration")
 	}
 
-	events, err := getEvents(config.ID, config.CalendarType)
+	events, err := getEvents(config)
 	if err != nil {
 		log.L.Errorf("Failed to get events for room: %s | %v", room, err)
 		return ctx.JSON(http.StatusInternalServerError, "Failed to get room events")
@@ -31,16 +32,16 @@ func GetCalendar(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, events)
 }
 
-func getEvents(roomID string, service string) ([]models.CalendarEvent, error) {
-	switch service {
+func getEvents(roomConfig structs.ScheduleConfig) ([]models.CalendarEvent, error) {
+	switch roomConfig.CalendarType {
 	case "Google":
 		log.L.Infof("Calling G Suite microservice")
-		return helpers.GetGSuite(roomID)
+		return helpers.GetGSuite(roomConfig.Resource)
 	case "Exchange":
 		log.L.Infof("Calling Exchange microservice")
 		return nil, fmt.Errorf("Exchange service is currently unavailable")
 	default:
-		return nil, fmt.Errorf("Room %s currently has no calendar type setting", roomID)
+		return nil, fmt.Errorf("Room %s currently has no calendar type setting", roomConfig.ID)
 	}
 }
 
@@ -61,7 +62,7 @@ func SendEvent(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Failed to bind request body for: %s", room))
 	}
 
-	err = setEvents(config.ID, config.CalendarType, eventData)
+	err = setEvents(config, eventData)
 	if err != nil {
 		log.L.Errorf("Failed to send events to room: %s | %v", room, err)
 		return ctx.JSON(http.StatusInternalServerError, "Failed to send room event")
@@ -70,15 +71,15 @@ func SendEvent(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, fmt.Sprintf("Event set successfully for room: %s", room))
 }
 
-func setEvents(roomID string, service string, event models.CalendarEvent) error {
-	switch service {
+func setEvents(roomConfig structs.ScheduleConfig, event models.CalendarEvent) error {
+	switch roomConfig.CalendarType {
 	case "Google":
 		log.L.Infof("Calling G Suite microservice")
-		return helpers.SendGSuite(roomID, event)
+		return helpers.SendGSuite(roomConfig.Resource, event)
 	case "Exchange":
 		log.L.Infof("Calling Exchange microservice")
 		return fmt.Errorf("Exchange service is currently unavailable")
 	default:
-		return fmt.Errorf("Room %s currently has no calendar type setting", roomID)
+		return fmt.Errorf("Room %s currently has no calendar type setting", roomConfig.ID)
 	}
 }

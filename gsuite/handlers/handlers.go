@@ -14,15 +14,16 @@ import (
 //GetRoomEvents ...
 func GetRoomEvents(ctx echo.Context) error {
 	roomName := ctx.Param("room")
-	calendarService, err := helpers.AuthenticateClient("/helpers/go-calendar.json")
+	calendarService, err := helpers.AuthenticateClient("/assets/scheduler.json", "joe@avs.byu.edu")
+	// calendarService, err := helpers.AuthenticateClient("/assets/scheduler.json")
 	if err != nil {
-		log.L.Errorf("Cannot authenticate client: %s", err.Error())
+		log.L.Errorf("Cannot authenticate client | %s", err.Error())
 		return ctx.JSON(http.StatusInternalServerError, "Cannot authenticate client")
 	}
 
 	roomEvents, err := helpers.GetEvents(roomName, calendarService)
 	if err != nil {
-		log.L.Errorf("Error getting events: %s", err.Error())
+		log.L.Errorf("Error getting events | %s", err.Error())
 		return ctx.JSON(http.StatusInternalServerError, "Cannot get events")
 	}
 
@@ -39,9 +40,10 @@ func AddRoomEvent(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Failed to bind request body for: %s", roomName))
 	}
 
-	calendarService, err := helpers.AuthenticateClient("/helpers/go-calendar.json")
+	calendarService, err := helpers.AuthenticateClient("/assets/scheduler.json", "joe@avs.byu.edu")
+	// calendarService, err := helpers.AuthenticateClient("/assets/scheduler.json")
 	if err != nil {
-		log.L.Errorf("Cannot authenticate client: %s", err.Error())
+		log.L.Errorf("Cannot authenticate client | %s", err.Error())
 		return ctx.JSON(http.StatusInternalServerError, "Cannot authenticate client")
 	}
 

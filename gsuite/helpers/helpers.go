@@ -15,7 +15,7 @@ const (
 
 //GetEvents ...
 func GetEvents(room string, calSvc *calendar.Service) ([]models.CalendarEvent, error) {
-	log.L.Infof("Getting events for room: %s", room)
+	log.L.Infof("Getting events for resource: %s", room)
 	calID, err := findCalendarID(room, calSvc)
 	if err != nil {
 		return nil, err
@@ -76,7 +76,9 @@ func findCalendarID(room string, calSvc *calendar.Service) (string, error) {
 		return "", fmt.Errorf("Unable to retrieve calendar list | %v", err)
 	}
 
+	log.L.Debug("Calendar Names:\n")
 	for _, cal := range calList.Items {
+		log.L.Debugf("%s\n", cal.Summary)
 		if cal.Summary == room {
 			return cal.Id, nil
 		}

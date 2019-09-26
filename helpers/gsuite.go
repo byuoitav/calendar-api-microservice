@@ -14,7 +14,7 @@ import (
 //GetGSuite ...
 func GetGSuite(room string) ([]models.CalendarEvent, error) {
 	//Todo: Figure out authentication keys, etc.
-	log.L.Infof("Requesting G Suite events for room: %s", room)
+	log.L.Infof("Requesting G Suite events for resource: %s", room)
 	//Call the gsuite microservice
 	requestURL := "http://localhost:8034/events/" + room
 	resp, err := http.Get(requestURL)
@@ -44,7 +44,7 @@ func GetGSuite(room string) ([]models.CalendarEvent, error) {
 
 //SendGSuite ...
 func SendGSuite(room string, event models.CalendarEvent) error {
-	log.L.Infof("Sending G Suite event to calendar for room: %s", room)
+	log.L.Infof("Sending G Suite event to calendar for resource: %s", room)
 
 	requestURL := "http://localhost:8034/events/" + room
 	requestBody, err := json.Marshal(event)

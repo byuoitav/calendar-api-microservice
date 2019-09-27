@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"github.com/byuoitav/common/log"
 	"golang.org/x/oauth2/google"
@@ -17,8 +16,7 @@ func AuthenticateClient(credentials string, userEmail string) (*calendar.Service
 	// func AuthenticateClient(credentials string) (*calendar.Service, error) {
 	ctx := context.Background()
 
-	pwd, _ := os.Getwd()
-	data, err := ioutil.ReadFile(pwd + credentials)
+	data, err := ioutil.ReadFile(credentials)
 	if err != nil {
 		log.L.Errorf("Can't read project key file | %s", err.Error())
 		return nil, err

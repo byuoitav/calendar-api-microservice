@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/byuoitav/calendar-api-microservice/gsuite/models"
@@ -10,14 +11,25 @@ import (
 )
 
 const (
-	urlPrefix = "https://www.googleapis.com/calendar/v3"
+	urlPrefix   = "https://www.googleapis.com/calendar/v3"
+	userEmail   = "G_SUITE_EMAIL"
+	credentials = "G_SUITE_CREDENTIALS"
 )
 
-//GetEvents ...
-func GetEvents(room string, calSvc *calendar.Service) ([]models.CalendarEvent, error) {
+//GetEvents finds the appropriate calendar and returns the days events
+func GetEvents(room string) ([]models.CalendarEvent, error) {
 	log.L.Infof("Getting events for resource: %s", room)
+
+	calSvc, err := AuthenticateClient(os.Getenv(credentials), os.Getenv(userEmail))
+	// calendarService, err := helpers.AuthenticateClient(os.Getenv(credentials))
+	if err != nil {
+		log.L.Error("Cannot authenticate client")
+		return nil, fmt.Errorf("Cannot authenticate client | %v", err)
+	}
+
 	calID, err := findCalendarID(room, calSvc)
 	if err != nil {
+		log.L.Error("Cannot find calendar ID")
 		return nil, err
 	}
 
@@ -27,7 +39,7 @@ func GetEvents(room string, calSvc *calendar.Service) ([]models.CalendarEvent, e
 
 	eventList, err := calSvc.Events.List(calID).Fields("items(summary, start, end)").TimeMin(currentDayBeginning.Format("2006-01-02T15:04:05-07:00")).TimeMax(currentDayEnding.Format("2006-01-02T15:04:05-07:00")).Do()
 	if err != nil {
-		log.L.Errorf("Unable to retrieve events | %v", err)
+		log.L.Errorf("Unable to retrieve events")
 		return nil, fmt.Errorf("Unable to retrieve events | %v", err)
 	}
 
@@ -42,10 +54,18 @@ func GetEvents(room string, calSvc *calendar.Service) ([]models.CalendarEvent, e
 	return events, err
 }
 
-//SetEvent ...
-func SetEvent(room string, event models.CalendarEvent, calSvc *calendar.Service) error {
+//SetEvent finds the appropriate calendar and adds the given event
+func SetEvent(room string, event models.CalendarEvent) error {
+	calSvc, err := AuthenticateClient(os.Getenv(credentials), os.Getenv(userEmail))
+	// calendarService, err := helpers.AuthenticateClient(os.Getenv(credentials))
+	if err != nil {
+		log.L.Error("Cannot authenticate client")
+		return fmt.Errorf("Cannot authenticate client | %v", err)
+	}
+
 	calID, err := findCalendarID(room, calSvc)
 	if err != nil {
+		log.L.Error("Cannot find calendar ID")
 		return err
 	}
 
@@ -62,7 +82,7 @@ func SetEvent(room string, event models.CalendarEvent, calSvc *calendar.Service)
 
 	newEvent, err = calSvc.Events.Insert(calID, newEvent).Do()
 	if err != nil {
-		log.L.Errorf("Unable to create event | %v", err)
+		log.L.Errorf("Unable to create event")
 		return fmt.Errorf("Unable to create event | %v", err)
 	}
 
@@ -76,9 +96,9 @@ func findCalendarID(room string, calSvc *calendar.Service) (string, error) {
 		return "", fmt.Errorf("Unable to retrieve calendar list | %v", err)
 	}
 
-	log.L.Debug("Calendar Names:\n")
+	log.L.Debug("Calendar Names:")
 	for _, cal := range calList.Items {
-		log.L.Debugf("%s\n", cal.Summary)
+		log.L.Debugf("%s", cal.Summary)
 		if cal.Summary == room {
 			return cal.Id, nil
 		}

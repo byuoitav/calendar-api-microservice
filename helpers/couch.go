@@ -1,4 +1,4 @@
-package couch
+package helpers
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/byuoitav/common/log"
 )
 
-//GetCouchConfig makes request to couchdb to get scheduling-config
+//GetCouchConfig makes request to couchdb to get scheduling-config data
 func GetCouchConfig(room string) (structs.ScheduleConfig, error) {
 	config, err := db.GetDB().GetScheduleConfig(room)
 	if err != nil {

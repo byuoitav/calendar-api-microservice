@@ -21,7 +21,6 @@ func GetEvents(room string) ([]models.CalendarEvent, error) {
 	log.L.Infof("Getting events for resource: %s", room)
 
 	calSvc, err := AuthenticateClient(os.Getenv(credentials), os.Getenv(userEmail))
-	// calendarService, err := helpers.AuthenticateClient(os.Getenv(credentials))
 	if err != nil {
 		log.L.Error("Cannot authenticate client")
 		return nil, fmt.Errorf("Cannot authenticate client | %v", err)
@@ -57,7 +56,6 @@ func GetEvents(room string) ([]models.CalendarEvent, error) {
 //SetEvent finds the appropriate calendar and adds the given event
 func SetEvent(room string, event models.CalendarEvent) error {
 	calSvc, err := AuthenticateClient(os.Getenv(credentials), os.Getenv(userEmail))
-	// calendarService, err := helpers.AuthenticateClient(os.Getenv(credentials))
 	if err != nil {
 		log.L.Error("Cannot authenticate client")
 		return fmt.Errorf("Cannot authenticate client | %v", err)

@@ -15,7 +15,7 @@ func main() {
 	// write := router.Group("", auth.AuthorizeRequest("write-state", "room", auth.LookupResourceFromAddress))
 	// read := router.Group("", auth.AuthorizeRequest("read-state", "room", auth.LookupResourceFromAddress))
 
-	router.GET("/calendar/:room", handlers.GetCalendar)
+	router.GET("/calendar/:room", handlers.GetCalendarEvents)
 	router.PUT("/calendar/:room", handlers.SendEvent)
 
 	router.PUT("/log-level/:level", log.SetLogLevel)

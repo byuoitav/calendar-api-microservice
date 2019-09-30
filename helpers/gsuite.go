@@ -11,9 +11,8 @@ import (
 	"github.com/byuoitav/common/log"
 )
 
-//GetGSuite ...
+//GetGSuite gets all calendar events from the g suite microservice
 func GetGSuite(room string) ([]models.CalendarEvent, error) {
-	//Todo: Figure out authentication keys, etc.
 	log.L.Infof("Requesting G Suite events for resource: %s", room)
 	//Call the gsuite microservice
 	requestURL := "http://localhost:8034/events/" + room
@@ -42,7 +41,7 @@ func GetGSuite(room string) ([]models.CalendarEvent, error) {
 	return events, err
 }
 
-//SendGSuite ...
+//SendGSuite sends an event object to the g suite microservice
 func SendGSuite(room string, event models.CalendarEvent) error {
 	log.L.Infof("Sending G Suite event to calendar for resource: %s", room)
 

@@ -11,9 +11,8 @@ import (
 	"google.golang.org/api/option"
 )
 
-//AuthenticateClient ...
+//AuthenticateClient authenticates the client and returns a calendar service object
 func AuthenticateClient(credentials string, userEmail string) (*calendar.Service, error) {
-	// func AuthenticateClient(credentials string) (*calendar.Service, error) {
 	ctx := context.Background()
 
 	data, err := ioutil.ReadFile(credentials)
@@ -39,8 +38,4 @@ func AuthenticateClient(credentials string, userEmail string) (*calendar.Service
 	}
 
 	return service, nil
-
-	// client := conf.Client(oauth2.NoContext)
-
-	// return calendar.New(client)
 }

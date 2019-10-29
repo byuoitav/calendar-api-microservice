@@ -11,11 +11,15 @@ import (
 	"github.com/byuoitav/common/log"
 )
 
+/**
+	DEPRECATED
+	- possibly
+**/
+
 //GetGSuite gets all calendar events from the g suite microservice
-func GetGSuite(room string) ([]models.CalendarEvent, error) {
-	log.L.Infof("Requesting G Suite events for resource: %s", room)
+func GetGSuite(room string, url string) ([]models.CalendarEvent, error) {
 	//Call the gsuite microservice
-	requestURL := "http://localhost:8034/events/" + room
+	requestURL := url + room
 	resp, err := http.Get(requestURL)
 	if err != nil {
 		log.L.Errorf("Cannot send request to: %s | %v", requestURL, err)
@@ -42,10 +46,9 @@ func GetGSuite(room string) ([]models.CalendarEvent, error) {
 }
 
 //SendGSuite sends an event object to the g suite microservice
-func SendGSuite(room string, event models.CalendarEvent) error {
-	log.L.Infof("Sending G Suite event to calendar for resource: %s", room)
+func SendGSuite(room string, event models.CalendarEvent, url string) error {
 
-	requestURL := "http://localhost:8034/events/" + room
+	requestURL := url + room
 	requestBody, err := json.Marshal(event)
 	if err != nil {
 		log.L.Errorf("Cannot convert event to JSON | %v", err)

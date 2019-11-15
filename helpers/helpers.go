@@ -17,16 +17,17 @@ func GetEvents(roomConfig structs.ScheduleConfig) ([]models.CalendarEvent, error
 	switch roomConfig.CalendarType {
 	case "Google":
 		log.L.Info("Calling G Suite microservice")
-		log.L.Infof("Requesting G Suite events for resource: %s", room)
+		log.L.Infof("Requesting G Suite events for resource: %s", roomConfig.Name)
 		return GetGSuite(roomConfig.Resource, "http://localhost:8034/events/")
 	case "Exchange":
 		log.L.Info("Calling Exchange microservice")
-		return nil, fmt.Error("Exchange service is currently unavailable")
+		return nil, fmt.Errorf("Exchange service is currently unavailable")
 	case "TeamUp":
 		log.L.Info("Calling TeamUp microservice")
-		return nil, fmt.Error("TeamUp service is currently unavailable")
+		log.L.Infof("Requesting TeamUp events for resource: %s", roomConfig.Name)
+		return getEventsRequest(roomConfig.Resource, "http://localhost:8036/events/")
 	default:
-		return nil, fmt.Errorf("Room %s currently has no calendar type setting", roomConfig.ID)
+		return nil, fmt.Errorf("Device %s currently has no calendar type setting", roomConfig.ID)
 	}
 }
 
@@ -35,16 +36,17 @@ func SetEvent(roomConfig structs.ScheduleConfig, event models.CalendarEvent) err
 	switch roomConfig.CalendarType {
 	case "Google":
 		log.L.Info("Calling G Suite microservice")
-		log.L.Infof("Sending G Suite event to calendar for resource: %s", room)
+		log.L.Infof("Sending G Suite event to calendar for resource: %s", roomConfig.Name)
 		return SendGSuite(roomConfig.Resource, event, "http://localhost:8034/events/")
 	case "Exchange":
 		log.L.Info("Calling Exchange microservice")
-		return fmt.Error("Exchange service is currently unavailable")
+		return fmt.Errorf("Exchange service is currently unavailable")
 	case "TeamUp":
 		log.L.Info("Calling TeamUp microservice")
-		return fmt.Error("TeamUp service is currently unavailable")
+		log.L.Infof("Sending TeamUp event to calendar for resource: %s", roomConfig.Name)
+		return sendEventsRequest(roomConfig.Resource, event, "http://localhost:8036/events/")
 	default:
-		return fmt.Errorf("Room %s currently has no calendar type setting", roomConfig.ID)
+		return fmt.Errorf("Device %s currently has no calendar type setting", roomConfig.ID)
 	}
 }
 

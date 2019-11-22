@@ -64,7 +64,7 @@ func GetTeamUpEvents(calID string, subCalName string) ([]models.CalendarEvent, e
 	var calendarEvents []models.CalendarEvent
 	for _, event := range eventResponse.Events {
 		calEvent := &models.CalendarEvent{
-			Name:      event.Title,
+			Title:     event.Title,
 			StartTime: event.StartDate,
 			EndTime:   event.EndDate,
 		}
@@ -88,7 +88,7 @@ func SetTeamUpEvent(calID string, subCalName string, event models.CalendarEvent)
 	// Translate event to team up event
 	teamUpEvent := &models.TeamUpEventSend{
 		SubCalendarID: subCalID,
-		Title:         event.Name,
+		Title:         event.Title,
 		StartDate:     event.StartTime,
 		EndDate:       event.EndTime,
 		AllDay:        false,

@@ -17,6 +17,7 @@ func main() {
 
 	router.GET("/calendar/:room", handlers.GetCalendarEvents)
 	router.PUT("/calendar/:room", handlers.SendEvent)
+	router.GET("/config", handlers.GetConfig)
 
 	router.PUT("/log-level/:level", log.SetLogLevel)
 	router.GET("/log-level", log.GetLogLevel)

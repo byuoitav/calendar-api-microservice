@@ -45,7 +45,7 @@ func GetEvents(room string) ([]models.CalendarEvent, error) {
 	var events []models.CalendarEvent
 	for _, event := range eventList.Items {
 		events = append(events, models.CalendarEvent{
-			Name:      event.Summary,
+			Title:     event.Summary,
 			StartTime: event.Start.DateTime,
 			EndTime:   event.End.DateTime})
 	}
@@ -69,7 +69,7 @@ func SetEvent(room string, event models.CalendarEvent) error {
 
 	//Translate event into g suite calendar event object
 	newEvent := &calendar.Event{
-		Summary: event.Name,
+		Summary: event.Title,
 		Start: &calendar.EventDateTime{
 			DateTime: event.StartTime,
 		},

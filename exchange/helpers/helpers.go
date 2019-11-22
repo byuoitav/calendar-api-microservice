@@ -23,10 +23,10 @@ func GetExchangeEvents() ([]models.CalendarEvent, error) {
 	bearerToken := "Bearer " + token
 
 	//Todo: Identify proper calendar
+	calendarID := "calendarID"
 
 	//Get calendar events for the day
-
-	requestURL := "https://outlook.office.com/api/v2.0/me/{calendarID}/calendarView"
+	requestURL := "https://outlook.office.com/api/v2.0/me/" + calendarID + "/calendarView"
 	client := &http.Client{}
 	request, err := http.NewRequest(http.MethodGet, requestURL, nil)
 	if err != nil {
@@ -69,8 +69,8 @@ func GetExchangeEvents() ([]models.CalendarEvent, error) {
 	for _, event := range respBody {
 		events = append(events, models.CalendarEvent{
 			Title:         event.Subject,
-			startDateTime: "",
-			endDateTime:   "",
+			startTime: "",  //Todo: set the start time
+			endTime:   "",  //Todo: set the end time
 		})
 	}
 
@@ -81,6 +81,7 @@ func GetExchangeEvents() ([]models.CalendarEvent, error) {
 func SetExchangeEvent(event models.CalendarEvent) error {
 
 	//Todo: Identify proper calendar
+	calendarID := "calendarID"
 
 	token, err := GetToken()
 	if err != nil {
@@ -103,7 +104,7 @@ func SetExchangeEvent(event models.CalendarEvent) error {
 	}
 
 	//Send event request
-	requestURL := "https://outlook.office.com/api/v2.0/me/calendars/{calendarID}/events"
+	requestURL := "https://outlook.office.com/api/v2.0/me/calendars/" + calendarID + "/events"
 	client := &http.Client{}
 	request, err := http.NewRequest(http.MethodPost, requestURL, bytes.NewBuffer(requestBody))
 	if err != nil {
@@ -113,10 +114,10 @@ func SetExchangeEvent(event models.CalendarEvent) error {
 
 	request.Header.Add("Authorization", bearerToken)
 	request.Header.Add("Content-Type", "application/json")
-
+	Date
 	resp, err := client.Do(request)
 	if err != nil {
-		log.L.Errorf("Error sending http request to: %s | %v", requestURL, err)
+		log.L.Errorf("Error sending http request to: %s | %v", requestURL, err)calendarID
 		return nil, fmt.Errorf("Error sending http request to: %s | %v", requestURL, err)
 	}
 	defer resp.Body.Close()

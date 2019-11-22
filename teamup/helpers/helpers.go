@@ -13,19 +13,20 @@ import (
 )
 
 const (
-	apiKey   = "TEAMUP_API_KEY"
-	password = "TEAMUP_PASSWORD"
+	apiKey     = "TEAMUP_API_KEY"
+	password   = "TEAMUP_PASSWORD"
+	calendarID = "TEAMUP_CALENDAR_ID"
 )
 
 // GetTeamUpEvents sends a request to the teamup api to get all the days events for the given calendar
-func GetTeamUpEvents(calID string, subCalName string) ([]models.CalendarEvent, error) {
-
-	subCalID, err := GetSubcalendarID(calID, subCalName)
+func GetTeamUpEvents(subCalName string) ([]models.CalendarEvent, error) {
+	subCalID, err := GetSubcalendarID(subCalName)
 	if err != nil {
 		return nil, fmt.Errorf("Error getting subcalendar id | %s", err.Error())
 	}
 
 	client := http.Client{}
+	calID := os.Getenv(calendarID)
 
 	url := "https://api.teamup.com/" + calID + "/events"
 	request, err := http.NewRequest("GET", url, nil)
@@ -75,9 +76,8 @@ func GetTeamUpEvents(calID string, subCalName string) ([]models.CalendarEvent, e
 }
 
 // SetTeamUpEvent sends a request to the teamup api to set a calendar event
-func SetTeamUpEvent(calID string, subCalName string, event models.CalendarEvent) error {
-
-	subCalIDStr, err := GetSubcalendarID(calID, subCalName)
+func SetTeamUpEvent(subCalName string, event models.CalendarEvent) error {
+	subCalIDStr, err := GetSubcalendarID(subCalName)
 	if err != nil {
 		return fmt.Errorf("Error getting subcalendar id | %s", err.Error())
 	}
@@ -95,6 +95,7 @@ func SetTeamUpEvent(calID string, subCalName string, event models.CalendarEvent)
 	}
 
 	client := http.Client{}
+	calID := os.Getenv(calendarID)
 
 	requestBody, err := json.Marshal(teamUpEvent)
 	if err != nil {
@@ -135,7 +136,8 @@ func SetTeamUpEvent(calID string, subCalName string, event models.CalendarEvent)
 }
 
 // GetSubcalendarID sends a request to the teamup api to get the appropriate subcalendar id
-func GetSubcalendarID(calID string, subcalendarName string) (string, error) {
+func GetSubcalendarID(subcalendarName string) (string, error) {
+	calID := os.Getenv(calendarID)
 	client := http.Client{}
 
 	url := "https://api.teamup.com/" + calID + "/subcalendars"

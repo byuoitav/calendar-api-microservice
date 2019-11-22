@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/byuoitav/calendar-api-microservice/teamup/helpers"
 	"github.com/byuoitav/calendar-api-microservice/teamup/models"
@@ -11,16 +10,12 @@ import (
 	"github.com/labstack/echo"
 )
 
-const calID = "TEAMUP_CALENDAR_ID"
-
 // GetRoomEvents handles getting events from the teamup calendar
 func GetRoomEvents(ctx echo.Context) error {
 	//get room
 	roomName := ctx.Param("room")
-	//get calendar id
-	calendarID := os.Getenv(calID)
 
-	events, err := helpers.GetTeamUpEvents(calendarID, roomName)
+	events, err := helpers.GetTeamUpEvents(roomName)
 	if err != nil {
 		log.L.Errorf("Error getting events | %s", err.Error())
 		return ctx.JSON(http.StatusInternalServerError, "Cannot get events")
@@ -33,8 +28,6 @@ func GetRoomEvents(ctx echo.Context) error {
 func AddRoomEvent(ctx echo.Context) error {
 	//get room
 	roomName := ctx.Param("room")
-	//get calendar id
-	calendarID := os.Getenv(calID)
 
 	//Read body into calendar event object
 	var eventData models.CalendarEvent
@@ -44,7 +37,7 @@ func AddRoomEvent(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Failed to bind request body for: %s", roomName))
 	}
 
-	err = helpers.SetTeamUpEvent(calendarID, roomName, eventData)
+	err = helpers.SetTeamUpEvent(roomName, eventData)
 	if err != nil {
 		log.L.Errorf("Error setting an event | %s", err.Error())
 		return ctx.JSON(http.StatusInternalServerError, "Cannot set event")

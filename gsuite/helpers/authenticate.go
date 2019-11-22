@@ -27,7 +27,10 @@ func AuthenticateClient(credentials string, userEmail string) (*calendar.Service
 		log.L.Errorf("Can't sign JWT | %s", err.Error())
 		return nil, err
 	}
-	conf.Subject = userEmail
+	log.L.Info(userEmail)
+	if userEmail != "" {
+		conf.Subject = userEmail
+	}
 
 	ts := conf.TokenSource(ctx)
 

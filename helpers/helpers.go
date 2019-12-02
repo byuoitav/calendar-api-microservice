@@ -18,7 +18,7 @@ func GetEvents(roomConfig structs.ScheduleConfig) ([]models.CalendarEvent, error
 	case "Google":
 		log.L.Info("Calling G Suite microservice")
 		log.L.Infof("Requesting G Suite events for resource: %s", roomConfig.Name)
-		return GetGSuite(roomConfig.Resource, "http://localhost:8034/events/")
+		return getEventsRequest(roomConfig.Resource, "http://localhost:8034/events/")
 	case "Exchange":
 		log.L.Info("Calling Exchange microservice")
 		return nil, fmt.Errorf("Exchange service is currently unavailable")
@@ -37,7 +37,7 @@ func SetEvent(roomConfig structs.ScheduleConfig, event models.CalendarEvent) err
 	case "Google":
 		log.L.Info("Calling G Suite microservice")
 		log.L.Infof("Sending G Suite event to calendar for resource: %s", roomConfig.Name)
-		return SendGSuite(roomConfig.Resource, event, "http://localhost:8034/events/")
+		return sendEventsRequest(roomConfig.Resource, event, "http://localhost:8034/events/")
 	case "Exchange":
 		log.L.Info("Calling Exchange microservice")
 		return fmt.Errorf("Exchange service is currently unavailable")
@@ -74,6 +74,9 @@ func getEventsRequest(room string, serviceURL string) ([]models.CalendarEvent, e
 		log.L.Errorf("Error resolving response body | %v", err)
 		return nil, fmt.Errorf("Error resolving response body | %v", err)
 	}
+
+	//Some services return events out of order
+	events = sortEvents(events)
 
 	//Return event array
 	return events, err
@@ -115,4 +118,36 @@ func sendEventsRequest(room string, event models.CalendarEvent, serviceURL strin
 	err = json.Unmarshal([]byte(body), &respBody)
 	log.L.Info(respBody)
 	return nil
+}
+
+func sortEvents(events []models.CalendarEvent) []models.CalendarEvent {
+	quickSort(events, 0, len(events)-1)
+	return events
+}
+
+func quickSort(events []models.CalendarEvent, low int, high int) {
+	if low < high {
+		partIndex := partition(events, low, high)
+		quickSort(events, low, partIndex-1)
+		quickSort(events, partIndex+1, high)
+	}
+}
+
+func partition(events []models.CalendarEvent, low int, high int) int {
+	pivot := events[high]
+	swap1 := low
+	for swap2 := low; swap2 < high; swap2++ {
+		if events[swap2].StartTime < pivot.StartTime {
+			swapValue(events, swap1, swap2)
+			swap1++
+		}
+	}
+	swapValue(events, swap1, high)
+	return swap1
+}
+
+func swapValue(events []models.CalendarEvent, index1 int, index2 int) {
+	temp := events[index1]
+	events[index1] = events[index2]
+	events[index2] = temp
 }

@@ -13,7 +13,7 @@ import (
 )
 
 // GetExchangeEvents gets events from exchange
-func GetExchangeEvents() ([]models.CalendarEvent, error) {
+func GetExchangeEvents(room string) ([]models.CalendarEvent, error) {
 	//Get token
 	token, err := GetToken()
 	if err != nil {
@@ -65,12 +65,23 @@ func GetExchangeEvents() ([]models.CalendarEvent, error) {
 		return nil, fmt.Errorf("Error unmarshalling response body from json into exchange event object | %v", err)
 	}
 
+	dateTimeLayout := "2006-01-02T15:04:05"
 	var events []models.CalendarEvent
 	for _, event := range respBody {
+		eventStart, err := time.Parse(dateTimeLayout, event.Start.DateTime)
+		if err != nil {}
+		eventEnd, err := time.Parse(dateTimeLayout, event.End.DateTime)
+		if err != nil {}
+
+		location, err := time.LoadLocation(event.Start.TimeZone)
+		if err != nil {}
+		eventStart = eventStart.In(location)
+		eventEnd = eventEnd.In(location)
+
 		events = append(events, models.CalendarEvent{
 			Title:         event.Subject,
-			startTime: "",  //Todo: set the start time
-			endTime:   "",  //Todo: set the end time
+			startTime: eventStart.Format("2006-01-02T15:04:05-07:00"),
+			endTime:   eventEnd.Format("2006-01-02T15:04:05-07:00"),
 		})
 	}
 
@@ -78,9 +89,9 @@ func GetExchangeEvents() ([]models.CalendarEvent, error) {
 }
 
 // SetExchangeEvent sets an event in exchange
-func SetExchangeEvent(event models.CalendarEvent) error {
+func SetExchangeEvent(event models.CalendarEvent, room string) error {
 
-	//Todo: Identify proper calendar
+	// Todo: Identify proper calendar
 	calendarID := "calendarID"
 
 	token, err := GetToken()
@@ -91,15 +102,20 @@ func SetExchangeEvent(event models.CalendarEvent) error {
 	bearerToken := "Bearer " + token
 
 	//Convert calendar event into exchange event
+	eventStart := time.Date(event.StartTime)
+	eventStartZone, _ := eventStart.Zone()
+	eventEnd := time.Date(event.EndTime)
+	eventEndZone, _ := eventEnd.Zone()
+
 	requestBody := models.ExchangeEventRequest{
 		Subject: event.Title,
 		Start: models.ExchangeDate{
-			DateTime: time.Date(event.StartTime).Format("2006-01-02T15:04:05"),
-			TimeZone: "", // Get timezone
+			DateTime: eventStart.Format("2006-01-02T15:04:05"),
+			TimeZone: eventStartZone,
 		},
 		End: models.ExchangeDate{
-			DateTime: time.Date(event.EndTime).Format("2006-01-02T15:04:05"),
-			TimeZone: "", // Get timezone
+			DateTime: eventEnd.Format("2006-01-02T15:04:05"),
+			TimeZone: eventEndZone,
 		},
 	}
 

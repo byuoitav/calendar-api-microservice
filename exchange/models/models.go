@@ -78,3 +78,28 @@ type ExchangeEmailAddress struct {
 	Address string `json:"address"`
 	Name    string `json:"name"`
 }
+
+type ExchangeCalenderResponse struct {
+	Value []ExchangeCalendar `json:"value"`
+}
+
+type ExchangeCalendar struct {
+	ID                            string                `json:"id"`
+	Name                          string                `json:"name"`
+	Color                         string                `json:"color"`
+	IsDefault                     bool                  `json:"isDefaultCalendar"`
+	ChangeKey                     string                `json:"changeKey"`
+	CanShare                      bool                  `json:"canShare"`
+	CanViewPrivate                bool                  `json:"canViewPrivateItems"`
+	CanEdit                       bool                  `json:"canEdit"`
+	AllowedOnlineMeetingProviders []string              `json:"allowedOnlineMeetingProviders"`
+	DefaultOnlineMeetingProvider  string                `json:"defaultOnlineMeetingProvider"`
+	TallyingResponses             bool                  `json:"isTallyingResponses"`
+	Removable                     bool                  `json:"isRemovable"`
+	Owner                         ExchangeCalendarOwner `json:"owner"`
+}
+
+type ExchangeCalendarOwner struct {
+	Name    string `json:"name"`
+	Address string `json:"Address"`
+}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/byuoitav/calendar-api-microservice/exchange/helpers"
 	"github.com/byuoitav/calendar-api-microservice/exchange/models"
 	"github.com/byuoitav/common/log"
 	"github.com/labstack/echo"
@@ -12,8 +13,9 @@ import (
 // GetRoomEvents handles getting the days event for the given room
 func GetRoomEvents(ctx echo.Context) error {
 	roomName := ctx.Param("room")
+	resource := cts.Param("resource")
 
-	events, err := helpers.GetExchangeEvents(roomName)
+	events, err := helpers.GetExchangeEvents(roomName, resource)
 	if err != nil {
 		log.L.Errorf("Failed to get exchange events for: %s | %v", roomName, err)
 		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Failed to get events for: %s", roomName))
@@ -26,6 +28,8 @@ func GetRoomEvents(ctx echo.Context) error {
 // AddRoomEvent handles adding an event to the calendar for the given room
 func AddRoomEvent(ctx echo.Context) error {
 	roomName := ctx.Param("room")
+	resource := ctx.Param("resource")
+
 	var eventData models.CalendarEvent
 	err := ctx.Bind(&eventData)
 	if err != nil {

@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/byuoitav/calendar-api-microservice/exchange/models"
+	"github.com/byuoitav/common/log"
 )
 
 const (
@@ -23,13 +24,13 @@ func GetToken() (string, error) {
 
 	bodyParams := url.Values{}
 	bodyParams.Set("client_id", os.Getenv(clientID))
-	bodyParams.Set("scope", "https://graph.microsoft.com/.default")
+	bodyParams.Set("scope", "https://outlook.office.com/.default")
 	bodyParams.Set("client_secret", os.Getenv(clientSecret))
 	bodyParams.Set("grant_type", "client_credentials")
 
 	requestURL := "https://login.microsoftonline.com/" + os.Getenv(tennantID) + "/oauth2/v2.0/token"
 	client := &http.Client{}
-	request, err := http.NewRequest(http.MethodPost, requestURL, bodyParams.Encode())
+	request, err := http.NewRequest(http.MethodPost, requestURL, strings.NewReader(bodyParams.Encode()))
 	request.Header.Set("Content-type", "application/x-www-form-urlencoded")
 	if err != nil {
 		log.L.Errorf("Cannot make HTTP Post request to: %s | %v", requestURL, err)

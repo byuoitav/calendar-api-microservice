@@ -14,41 +14,45 @@ type ExchangeToken struct {
 	Token      string `json:"access_token"`
 }
 
+type ExchangeEventResponse struct {
+	Events []ExchangeEvent `json:"value"`
+}
+
 // ExchangeEvent models an event returned by microsoft exchange service
 type ExchangeEvent struct {
-	ID                         string       `json:"id"`
-	CreatedDateTime            string       `json:"createdDateTime"`
-	LastModifiedDateTime       string       `json:"lastModifiedDateTime"`
-	ChangeKey                  string       `json:"changeKey"`
-	Categories                 string       `json:"categories"`
-	OriginalStartTimeZone      string       `json:"originalStartTimeZone"`
-	OriginalEndTimeZone        string       `json:"originalEndTimeZone"`
-	ICalUID                    string       `json:"iCalUId"`
-	ReminderMinutesBeforeStart int          `json:"reminderMinutesBeforeStart"`
-	IsReminderOn               bool         `json:"isReminderOn"`
-	HasAttachments             bool         `json:"hasAttachments"`
-	Subject                    string       `json:"subject"`
-	BodyPreview                string       `json:"bodyPreview"`
-	Importance                 string       `json:"importance"`
-	Sensitivity                string       `json:"sensitivity"`
-	IsAllDay                   bool         `json:"isAllDay"`
-	IsCancelled                bool         `json:"isCancelled"`
-	IsOrganizer                bool         `json:"isOrganizer"`
-	ResponseRequested          bool         `json:"responseRequested"`
-	SeriesMasterID             string       `json:"seriesMasterId"`
-	ShowAs                     string       `json:"showAs"`
-	EventType                  string       `json:"type"`
-	WebLink                    string       `json:"webLink"`
-	OnlineMeetingURL           string       `json:"onlineMeetingUrl"`
-	Recurrence                 string       `json:"recurrence"`
-	ResponseStatus             string       `json:"responseStatus"`
-	Body                       ExchangeBody `json:"body"`
-	Start                      ExchangeDate `json:"start"`
-	End                        ExchangeDate `json:"end"`
-	Location                   string       `json:"location"`
-	Locations                  string       `json:"locations"`
-	Attendees                  string       `json:"attendees"`
-	Organizer                  string       `json:"organizer"`
+	ID                         string   `json:"id"`
+	CreatedDateTime            string   `json:"createdDateTime"`
+	LastModifiedDateTime       string   `json:"lastModifiedDateTime"`
+	ChangeKey                  string   `json:"changeKey"`
+	Categories                 []string `json:"categories"`
+	OriginalStartTimeZone      string   `json:"originalStartTimeZone"`
+	OriginalEndTimeZone        string   `json:"originalEndTimeZone"`
+	ICalUID                    string   `json:"iCalUId"`
+	ReminderMinutesBeforeStart int      `json:"reminderMinutesBeforeStart"`
+	IsReminderOn               bool     `json:"isReminderOn"`
+	HasAttachments             bool     `json:"hasAttachments"`
+	Subject                    string   `json:"subject"`
+	BodyPreview                string   `json:"bodyPreview"`
+	Importance                 string   `json:"importance"`
+	Sensitivity                string   `json:"sensitivity"`
+	IsAllDay                   bool     `json:"isAllDay"`
+	IsCancelled                bool     `json:"isCancelled"`
+	IsOrganizer                bool     `json:"isOrganizer"`
+	ResponseRequested          bool     `json:"responseRequested"`
+	SeriesMasterID             string   `json:"seriesMasterId"`
+	ShowAs                     string   `json:"showAs"`
+	EventType                  string   `json:"type"`
+	WebLink                    string   `json:"webLink"`
+	OnlineMeetingURL           string   `json:"onlineMeetingUrl"`
+	Recurrence                 string   `json:"recurrence"`
+	// ResponseStatus             string       `json:"responseStatus"`
+	Body  ExchangeBody `json:"body"`
+	Start ExchangeDate `json:"start"`
+	End   ExchangeDate `json:"end"`
+	// Location  string       `json:"location"`
+	// Locations string       `json:"locations"`
+	// Attendees string       `json:"attendees"`
+	// Organizer string       `json:"organizer"`
 }
 
 type ExchangeEventRequest struct {
@@ -80,7 +84,7 @@ type ExchangeEmailAddress struct {
 }
 
 type ExchangeCalenderResponse struct {
-	Value []ExchangeCalendar `json:"value"`
+	Calendars []ExchangeCalendar `json:"value"`
 }
 
 type ExchangeCalendar struct {

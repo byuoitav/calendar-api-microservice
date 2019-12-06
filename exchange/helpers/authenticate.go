@@ -21,7 +21,7 @@ const (
 
 // GetToken sends a request to microsoft to get a bearer token and returns the result
 func GetToken() (string, error) {
-
+	log.L.Info("Prepping auth token http request...")
 	bodyParams := url.Values{}
 	bodyParams.Set("client_id", os.Getenv(clientID))
 	bodyParams.Set("scope", "https://outlook.office.com/.default")
@@ -37,6 +37,7 @@ func GetToken() (string, error) {
 		return "", fmt.Errorf("Cannot make HTTP Post request to: %s | %v", requestURL, err)
 	}
 
+	log.L.Info("Sending auth token http request...")
 	resp, err := client.Do(request)
 	if err != nil {
 		log.L.Errorf("Cannot send request to: %s | %v", requestURL, err)
@@ -49,6 +50,7 @@ func GetToken() (string, error) {
 		return "", fmt.Errorf("Error resolving response body | %v", err)
 	}
 
+	log.L.Info("Validating http response...")
 	var respBody models.ExchangeToken
 	err = json.Unmarshal([]byte(body), &respBody)
 	if err != nil {
@@ -56,5 +58,6 @@ func GetToken() (string, error) {
 		return "", fmt.Errorf("Error unmarshalling json body | %v", err)
 	}
 
+	log.L.Info("Successfully retrieved auth token...")
 	return respBody.Token, nil
 }

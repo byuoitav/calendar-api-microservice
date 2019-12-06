@@ -56,31 +56,31 @@ type ExchangeEvent struct {
 }
 
 type ExchangeEventRequest struct {
-	Subject   string             `json:"subject"`
-	Body      ExchangeBody       `json:"body"`
-	Start     ExchangeDate       `json:"start"`
-	End       ExchangeDate       `json:"end"`
-	Attendees []ExchangeAttendee `json:"attendees"`
+	Subject   string             `json:"Subject"`
+	Body      ExchangeBody       `json:"Body"`
+	Start     ExchangeDate       `json:"Start"`
+	End       ExchangeDate       `json:"End"`
+	Attendees []ExchangeAttendee `json:"Attendees"`
 }
 
 type ExchangeBody struct {
-	ContentType string `json:"contentType"`
-	Content     string `json:"content"`
+	ContentType string `json:"ContentType"`
+	Content     string `json:"Content"`
 }
 
 type ExchangeDate struct {
-	DateTime string `json:"dateTime"`
-	TimeZone string `json:"timeZone"`
+	DateTime string `json:"DateTime"`
+	TimeZone string `json:"TimeZone"`
 }
 
 type ExchangeAttendee struct {
-	EmailAddress ExchangeEmailAddress `json:"emailAddress"`
-	Type         string               `json:"type"`
+	EmailAddress ExchangeEmailAddress `json:"EmailAddress"`
+	Type         string               `json:"Type"`
 }
 
 type ExchangeEmailAddress struct {
-	Address string `json:"address"`
-	Name    string `json:"name"`
+	Address string `json:"Address"`
+	Name    string `json:"Name"`
 }
 
 type ExchangeCalenderResponse struct {

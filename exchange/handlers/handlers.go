@@ -13,7 +13,7 @@ import (
 // GetRoomEvents handles getting the days event for the given room
 func GetRoomEvents(ctx echo.Context) error {
 	roomName := ctx.Param("room")
-	resource := cts.Param("resource")
+	resource := ctx.Param("resource")
 
 	events, err := helpers.GetExchangeEvents(roomName, resource)
 	if err != nil {
@@ -37,7 +37,7 @@ func AddRoomEvent(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Failed to bind request body for: %s", roomName))
 	}
 
-	err = helpers.SetExchangeEvent(eventData, roomName)
+	err = helpers.SetExchangeEvent(eventData, roomName, resource)
 	if err != nil {
 		log.L.Errorf("Failed to send exchange event | %v", err)
 		return ctx.JSON(http.StatusInternalServerError, fmt.Sprintf("Failed to send exchange event for: %s", roomName))

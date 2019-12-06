@@ -83,16 +83,18 @@ func GetExchangeEvents(room string, resource string) ([]models.CalendarEvent, er
 		eventStart, err := time.Parse(dateTimeLayout, event.Start.DateTime)
 		if err != nil {
 			log.L.Errorf("Error parsing exchange event start time into go time struct | %v", err)
-			return fmt.Errorf("Error parsing exchange event start time into go time struct | %v", err)
+			return nil, fmt.Errorf("Error parsing exchange event start time into go time struct | %v", err)
 		}
 		eventEnd, err := time.Parse(dateTimeLayout, event.End.DateTime)
 		if err != nil {
 			log.L.Errorf("Error parsing exchange event end time into go time struct | %v", err)
-			return fmt.Errorf("Error parsing exchange event end time into go time struct | %v", err)
+			return nil, fmt.Errorf("Error parsing exchange event end time into go time struct | %v", err)
 		}
 
 		timeZone, _ := time.Now().Zone()
-		location, _ := time.LoadLocation(timeZone)log.L.Info()
+		location, _ := time.LoadLocation(timeZone)
+		eventStart = eventStart.In(location)
+		eventEnd = eventEnd.In(location)
 		events = append(events, models.CalendarEvent{
 			Title:     event.Subject,
 			StartTime: eventStart.Format("2006-01-02T15:04:05-07:00"),

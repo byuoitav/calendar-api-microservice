@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"net/http"
 
 	"github.com/byuoitav/calendar-api-microservice/gsuite/handlers"
@@ -9,7 +10,8 @@ import (
 )
 
 func main() {
-	port := ":8034"
+	port := flag.String("p", ":11001", "Port value")
+	flag.Parse()
 	router := common.NewRouter()
 
 	// write := router.Group("", auth.AuthorizeRequest("write-state", "room", auth.LookupResourceFromAddress))
@@ -21,7 +23,7 @@ func main() {
 	router.GET("/log-level", log.GetLogLevel)
 
 	server := http.Server{
-		Addr:           port,
+		Addr:           *port,
 		MaxHeaderBytes: 1024 * 10,
 	}
 

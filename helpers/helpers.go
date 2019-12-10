@@ -19,15 +19,15 @@ func GetEvents(roomConfig structs.ScheduleConfig) ([]models.CalendarEvent, error
 	case "Google":
 		log.L.Info("Calling G Suite microservice")
 		log.L.Infof("Requesting G Suite events for resource: %s", roomConfig.Name)
-		serviceURL += ":8034/events/" + roomConfig.Resource
+		serviceURL += ":11001/events/" + roomConfig.Resource
 	case "Exchange":
 		log.L.Info("Calling Exchange microservice")
 		log.L.Infof("Requesting Exchange events for resource: %s", roomConfig.Name)
-		serviceURL += ":8035/events/" + roomConfig.CalendarName + "/" + roomConfig.Resource // Change id to be calendar name
+		serviceURL += ":11002/events/" + roomConfig.CalendarName + "/" + roomConfig.Resource
 	case "TeamUp":
 		log.L.Info("Calling TeamUp microservice")
 		log.L.Infof("Requesting TeamUp events for resource: %s", roomConfig.Name)
-		serviceURL += ":8036/events" + roomConfig.Resource
+		serviceURL += ":11003/events" + roomConfig.Resource
 	default:
 		return nil, fmt.Errorf("Device %s currently has no calendar type setting", roomConfig.ID)
 	}
@@ -41,14 +41,14 @@ func SetEvent(roomConfig structs.ScheduleConfig, event models.CalendarEvent) err
 	case "Google":
 		log.L.Info("Calling G Suite microservice")
 		log.L.Infof("Sending G Suite event to calendar for resource: %s", roomConfig.Name)
-		serviceURL += ":8034/events/" + roomConfig.Resource
+		serviceURL += ":11001/events/" + roomConfig.Resource
 	case "Exchange":
 		log.L.Info("Calling Exchange microservice")
-		serviceURL += ":8035/events/" + roomConfig.CalendarName + "/" + roomConfig.Resource // Change id to be calendar name
+		serviceURL += ":11002/events/" + roomConfig.CalendarName + "/" + roomConfig.Resource
 	case "TeamUp":
 		log.L.Info("Calling TeamUp microservice")
 		log.L.Infof("Sending TeamUp event to calendar for resource: %s", roomConfig.Name)
-		serviceURL += ":8036/events" + roomConfig.Resource
+		serviceURL += ":11003/events" + roomConfig.Resource
 	default:
 		return fmt.Errorf("Device %s currently has no calendar type setting", roomConfig.ID)
 	}

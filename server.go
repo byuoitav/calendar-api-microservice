@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"net/http"
 
 	"github.com/byuoitav/calendar-api-microservice/handlers"
@@ -9,7 +10,8 @@ import (
 )
 
 func main() {
-	port := ":8033"
+	port := flag.String("p", ":8080", "Port value")
+	flag.Parse()
 	router := common.NewRouter()
 
 	// write := router.Group("", auth.AuthorizeRequest("write-state", "room", auth.LookupResourceFromAddress))
@@ -22,8 +24,11 @@ func main() {
 	router.PUT("/log-level/:level", log.SetLogLevel)
 	router.GET("/log-level", log.GetLogLevel)
 
+	// Set up static frontend
+	router.Static("/", "web-dist")
+
 	server := http.Server{
-		Addr:           port,
+		Addr:           *port,
 		MaxHeaderBytes: 1024 * 10,
 	}
 

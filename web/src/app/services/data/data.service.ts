@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 
-import { Event } from "../../model/o365.model";
 import * as moment from 'moment/moment';
 
 export class RoomStatus {
@@ -28,6 +27,7 @@ export class ScheduledEvent {
 })
 export class DataService {
   url: string;
+  port: string;
   status: RoomStatus;
   config: Object;
 
@@ -37,6 +37,8 @@ export class DataService {
     const base = location.origin.split(":");
     this.url = base[0] + ":" + base[1];
     console.log(this.url);
+    this.port = base[2];
+    console.log(this.port);
 
     this.getConfig();
 
@@ -91,7 +93,7 @@ export class DataService {
   getConfig = async () => {
     console.log("Getting config...");
 
-    await this.http.get(this.url + ":8033/config").subscribe(
+    await this.http.get(this.url + ":" + this.port + "/config").subscribe(
       data => {
         this.config = data;
         console.log("config", this.config);
@@ -108,7 +110,7 @@ export class DataService {
   };
 
   getScheduleData = async () => {
-    const url = this.url + ":8033/calendar/" + this.status.deviceName;
+    const url = this.url + ":" + this.port + "/calendar/" + this.status.deviceName;
     console.log("Getting schedule data from: ", url);
 
     await this.http.get<ScheduledEvent[]>(url).subscribe(
@@ -135,7 +137,7 @@ export class DataService {
   };
 
   submitNewEvent = async (event: ScheduledEvent) => {
-    const url = this.url + ":8033/calendar/" + this.status.deviceName;
+    const url = this.url + ":" + this.port + "/calendar/" + this.status.deviceName;
     console.log("Submitting new event to ", url);
     const httpHeaders = {
       headers: new HttpHeaders({

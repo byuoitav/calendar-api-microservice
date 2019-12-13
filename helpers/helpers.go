@@ -27,7 +27,7 @@ func GetEvents(roomConfig structs.ScheduleConfig) ([]models.CalendarEvent, error
 	case "TeamUp":
 		log.L.Info("Calling TeamUp microservice")
 		log.L.Infof("Requesting TeamUp events for resource: %s", roomConfig.Name)
-		serviceURL += ":11003/events" + roomConfig.Resource
+		serviceURL += ":11003/events/" + roomConfig.Resource
 	default:
 		return nil, fmt.Errorf("Device %s currently has no calendar type setting", roomConfig.ID)
 	}
@@ -48,7 +48,7 @@ func SetEvent(roomConfig structs.ScheduleConfig, event models.CalendarEvent) err
 	case "TeamUp":
 		log.L.Info("Calling TeamUp microservice")
 		log.L.Infof("Sending TeamUp event to calendar for resource: %s", roomConfig.Name)
-		serviceURL += ":11003/events" + roomConfig.Resource
+		serviceURL += ":11003/events/" + roomConfig.Resource
 	default:
 		return fmt.Errorf("Device %s currently has no calendar type setting", roomConfig.ID)
 	}

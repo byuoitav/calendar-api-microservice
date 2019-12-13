@@ -57,7 +57,7 @@ export class DataService {
   }
 
   getBackground(): string {
-    if (this.config && this.config.hasOwnProperty("image-url")) {
+    if (this.config && this.config.hasOwnProperty("image-url") && this.config["image-url"] != "") {
       return this.config["image-url"];
     }
 
